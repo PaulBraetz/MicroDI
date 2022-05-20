@@ -34,7 +34,7 @@ TService service = (TService)container.Resolve(typeof(TService));
 ```
 
 ## Extension Methods
-Extension Methods found in `Extensions.cs` make using the container and its factory simple. The previous workflow is reduced to the following:
+Extension Methods found in `Extensions.cs` simplify using the container and its factory. The previous workflow is reduced to the following:
 
 1. Instantiate a new `ContainerFactory`
 
