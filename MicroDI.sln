@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroDI", "MicroDI\MicroDI.csproj", "{83F34DD9-432D-486A-A2A6-961043A76D8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F390392-7116-4489-A09A-83AA0732368B}
+	EndGlobalSection
+EndGlobal
