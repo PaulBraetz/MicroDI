@@ -20,14 +20,15 @@ namespace MicroDI
 		{
 			public SingletonServiceFactory(IServiceDefinition definition)
 			{
-				instance = new TransientServiceFactory(definition).Build();
+				IServiceFactory factory = new TransientServiceFactory(definition);
+				instance = new Lazy<Object>(factory.Build);
 			}
 
-			private readonly Object instance;
+			private readonly Lazy<Object> instance;
 
 			public Object Build()
 			{
-				return instance;
+				return instance.Value;
 			}
 		}
 
