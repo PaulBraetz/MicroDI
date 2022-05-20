@@ -9,12 +9,14 @@
 	  <Description>A Simple Dependency Container</Description>
 	  <Copyright>2022</Copyright>
 	  <PackageTags>PBApp</PackageTags>
-	  <Version>2.0.1</Version>
+	  <Version>2.0.2</Version>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>MicroDI</PackageId>
 	  <AssemblyName>MicroDI</AssemblyName>
 	  <RootNamespace>MicroDI</RootNamespace>
 	  <Company>RhoMicro</Company>
+	  <PackageProjectUrl>https://github.com/PaulBraetz/MicroDI/</PackageProjectUrl>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>
