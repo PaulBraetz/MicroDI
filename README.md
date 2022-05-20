@@ -17,7 +17,7 @@ Type serviceType = typeof(TService);
 Type implementationType = typeof(TImplementation);
 Object constructorArg1 = new Object();
 Object constructorArg2 = new Object();
-IServiceDefinition serviceDefinition = new ServiceDefinition(serviceType, implementationType, ServiceScope.Transient, constructorArg1, constructorArg2);
+IServiceDefinition serviceDefinition = new ServiceDefinition(serviceType, implementationType, Scope.Transient, constructorArg1, constructorArg2);
 containerFactory.Add(serviceDefinition);
 ```
 
