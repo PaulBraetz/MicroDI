@@ -65,7 +65,7 @@ namespace MicroDI
 		{
 			public Container(IEnumerable<IServiceDefinition> definitions)
 			{
-				this.registrations = new ConcurrentDictionary<Type, IServiceFactory>(definitions
+				this.registrations = new Dictionary<Type, IServiceFactory>(definitions
 					.Select(d => new KeyValuePair<Type, IServiceFactory>(d.ServiceType, (d.ServiceScope) switch
 					{
 						Scope.Transient => new TransientServiceFactory(d),
@@ -88,10 +88,10 @@ namespace MicroDI
 				return registrations.ContainsKey(serviceType);
 			}
 
-			private readonly ConcurrentDictionary<Type, IServiceFactory> registrations;
+			private readonly Dictionary<Type, IServiceFactory> registrations;
 		}
 
-		private ConcurrentBag<IServiceDefinition> definitions = new ConcurrentBag<IServiceDefinition>();
+		private List<IServiceDefinition> definitions = new List<IServiceDefinition>();
 
 		public IContainer Build()
 		{

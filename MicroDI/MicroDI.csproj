@@ -6,12 +6,12 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Authors>Paul Brätz</Authors>
-	  <Description>A Simple Dependency Container</Description>
+	  <Description>A Simple DI Container</Description>
 	  <Copyright>2022</Copyright>
 	  <PackageTags>PBApp</PackageTags>
-	  <Version>2.0.2</Version>
+	  <Version>2.0.3</Version>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageId>MicroDI</PackageId>
+	  <PackageId>RhoMicro.MicroDI</PackageId>
 	  <AssemblyName>MicroDI</AssemblyName>
 	  <RootNamespace>MicroDI</RootNamespace>
 	  <Company>RhoMicro</Company>
