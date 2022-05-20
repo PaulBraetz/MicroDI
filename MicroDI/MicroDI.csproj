@@ -9,7 +9,7 @@
 	  <Description>A Simple Dependency Container</Description>
 	  <Copyright>2022</Copyright>
 	  <PackageTags>PBApp</PackageTags>
-	  <Version>1.0.0</Version>
+	  <Version>2.0.0</Version>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>MicroDI</PackageId>
 	  <AssemblyName>MicroDI</AssemblyName>

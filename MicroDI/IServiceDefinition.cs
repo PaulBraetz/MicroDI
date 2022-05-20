@@ -2,17 +2,14 @@
 {
 	public interface IServiceDefinition
 	{
-		Type ServiceType { get; }
-		Type ServiceImplementation { get; }
-		IEnumerable<Object> Arguments { get; }
-		ServiceDefinitions.ServiceScope Scope { get;}
-	}
-	public static class ServiceDefinitions
-	{
-		public enum ServiceScope
+		public enum Scope
 		{
 			Transient,
 			Singleton
 		}
+		Type ServiceType { get; }
+		Type ServiceImplementation { get; }
+		Scope ServiceScope { get; }
+		IEnumerable<Object> ConstructorArguments { get; }
 	}
 }
