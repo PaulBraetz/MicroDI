@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static MicroDI.IServiceDefinition;
@@ -37,9 +38,44 @@ namespace MicroDI
 			public TransientServiceFactory(IServiceDefinition definition)
 			{
 				var ctorInfo = definition.ServiceImplementation.GetConstructors()
-					.SingleOrDefault(c => c.GetParameters().Select(p => p.ParameterType).SequenceEqual(definition.ConstructorArguments.Select(p=>p.GetType())));
+					.SingleOrDefault(isMatch);
 
-				if(ctorInfo == null)
+				Boolean isMatch(ConstructorInfo constructorInfo)
+				{
+					ParameterInfo[] ctorParameters = constructorInfo.GetParameters();
+					
+					Type[] ctorParametersTypes = ctorParameters
+						.Select(p => p.GetType())
+						.ToArray();
+					
+					Type[] ctorArgsTypes = definition.ConstructorArguments
+						.Select(p => p.GetType())
+						.ToArray();
+
+					if (ctorParametersTypes.Length < ctorArgsTypes.Length)
+					{
+						return false;
+					}
+
+					for (int i = 0; i < ctorParametersTypes.Length; i++)
+					{
+						if (i < ctorArgsTypes.Length)
+						{
+							if (!ctorArgsTypes[i].IsAssignableTo(ctorParametersTypes[i]))
+							{
+								return false;
+							}
+						}
+						if (!(ctorParameters[i].Attributes.HasFlag(ParameterAttributes.Optional) ||
+							ctorParameters[i].Attributes.HasFlag(ParameterAttributes.HasDefault)))
+						{
+							return false;
+						}
+					}
+					return true;
+				}
+
+				if (ctorInfo == null)
 				{
 					throw new ArgumentException($"{definition.ServiceImplementation.Name} does not provide a constructor accepting the arguments {String.Join(", ", definition.ConstructorArguments.Select(p => p.GetType().Name))}");
 				}
@@ -70,7 +106,7 @@ namespace MicroDI
 					{
 						Scope.Transient => new TransientServiceFactory(d),
 						Scope.Singleton => new SingletonServiceFactory(d),
-						_=>throw new ArgumentException($"Unable to create service factory for scope {d.ServiceScope}.")
+						_ => throw new ArgumentException($"Unable to create service factory for scope {d.ServiceScope}.")
 					})));
 			}
 
