@@ -37,7 +37,7 @@ namespace MicroDI
 			public TransientServiceFactory(IServiceDefinition definition)
 			{
 				var ctorInfo = definition.ServiceImplementation.GetConstructors()
-					.Single(c => c.GetParameters().Select(p => p.ParameterType).SequenceEqual(definition.ConstructorArguments.Select(p=>p.GetType())));
+					.SingleOrDefault(c => c.GetParameters().Select(p => p.ParameterType).SequenceEqual(definition.ConstructorArguments.Select(p=>p.GetType())));
 
 				if(ctorInfo == null)
 				{

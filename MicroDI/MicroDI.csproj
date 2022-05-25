@@ -9,7 +9,7 @@
 	  <Description>A Simple DI Container</Description>
 	  <Copyright>2022</Copyright>
 	  <PackageTags>PBApp</PackageTags>
-	  <Version>2.0.3</Version>
+	  <Version>2.0.4</Version>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <PackageId>RhoMicro.MicroDI</PackageId>
 	  <AssemblyName>MicroDI</AssemblyName>
