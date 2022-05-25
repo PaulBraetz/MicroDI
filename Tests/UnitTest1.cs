@@ -40,20 +40,21 @@ namespace Tests
 
 			Assert.IsTrue(resolved.SequenceEqual(arg));
 		}
-		private sealed class TestService
+		private sealed class SingletonService
 		{
-			public TestService()
+			public SingletonService()
 			{
 				Interlocked.Increment(ref instanceCount);
 				passedArg = "No Arg";
 			}
-			public TestService(String arg)
+			public SingletonService(String arg)
 			{
 				Interlocked.Increment(ref instanceCount);
 				passedArg = arg;
 			}
-			private static int instanceCount;
+			private static Int32 instanceCount;
 			private readonly String passedArg;
+
 			public override String ToString()
 			{
 				return GetStringRepresentation(instanceCount, passedArg);
@@ -72,11 +73,58 @@ namespace Tests
 
 			String arg = "Some Parameter";
 
-			IContainer container = factory.AddTransient<Object, TestService>(arg).Build();
 
-			var resolved = container.Resolve<Object>();
+			IContainer container = factory.AddSingleton<Object, SingletonService>(arg).Build();
 
-			Assert.AreEqual(resolved.ToString(), arg);
+			String expected = SingletonService.GetStringRepresentation(1, arg);
+
+			for (int i = 1; i < 10; i++)
+			{
+				var resolved = container.Resolve<Object>();
+				Assert.AreEqual(expected, resolved.ToString());
+			}
+		}
+
+		private sealed class TransientService
+		{
+			public TransientService()
+			{
+				Interlocked.Increment(ref instanceCount);
+				passedArg = "No Arg";
+			}
+			public TransientService(String arg)
+			{
+				Interlocked.Increment(ref instanceCount);
+				passedArg = arg;
+			}
+			private static Int32 instanceCount;
+			private readonly String passedArg;
+
+			public override String ToString()
+			{
+				return GetStringRepresentation(instanceCount, passedArg);
+			}
+			public static String GetStringRepresentation(Int32 instanceCount, String arg)
+			{
+				return $"Instances created: {instanceCount}, Arg passed to this instance: {arg}";
+			}
+		}
+
+		[TestMethod]
+		public void TestContainerFactoryTransient()
+		{
+			IContainerFactory factory = new ContainerFactory();
+
+			String arg = "Some Parameter";
+
+			IContainer container = factory.AddTransient<Object, TransientService>(arg).Build();
+
+			for (Int32 i = 1; i < 10; i++)
+			{
+				Object? resolved = container.Resolve<Object>();
+				String expected = TransientService.GetStringRepresentation(i, arg);
+				Assert.AreEqual(expected, resolved.ToString());
+			}
 		}
 	}
 }
