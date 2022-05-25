@@ -126,7 +126,7 @@ namespace MicroDI
 			private readonly Dictionary<Type, IServiceFactory> registrations;
 		}
 
-		private List<IServiceDefinition> definitions = new List<IServiceDefinition>();
+		private HashSet<IServiceDefinition> definitions = new HashSet<IServiceDefinition>();
 
 		public IContainer Build()
 		{
@@ -135,7 +135,10 @@ namespace MicroDI
 
 		public void Add(IServiceDefinition serviceDefinition)
 		{
-			definitions.Add(serviceDefinition);
+			if (!definitions.Add(serviceDefinition))
+			{
+				throw new ArgumentException($"A definition for {serviceDefinition.ServiceType.Name} has already been added.");
+			}
 		}
 
 		public IEnumerator<IServiceDefinition> GetEnumerator()
