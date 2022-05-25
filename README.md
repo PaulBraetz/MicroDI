@@ -2,6 +2,13 @@
 
 MicroDI is a simple and lightweight DI Container.
 
+## Versioning
+
+This library uses semantic versioning, i.e.:
+A change from a.b.c to a.b.X represents a non breaking change that does not add new interfaces.
+A change from a.b.c to a.X.0 represents a non breaking change that adds new interfaces.
+A change from a.b.c to X.0.0 represents a breaking change.
+
 ## How To Use
 
 1. Instantiate a new `ContainerFactory`
