@@ -43,11 +43,11 @@ namespace MicroDI
 				Boolean isMatch(ConstructorInfo constructorInfo)
 				{
 					ParameterInfo[] ctorParameters = constructorInfo.GetParameters();
-					
+
 					Type[] ctorParametersTypes = ctorParameters
-						.Select(p => p.GetType())
+						.Select(p => p.ParameterType)
 						.ToArray();
-					
+
 					Type[] ctorArgsTypes = definition.ConstructorArguments
 						.Select(p => p.GetType())
 						.ToArray();
@@ -66,8 +66,7 @@ namespace MicroDI
 								return false;
 							}
 						}
-						if (!(ctorParameters[i].Attributes.HasFlag(ParameterAttributes.Optional) ||
-							ctorParameters[i].Attributes.HasFlag(ParameterAttributes.HasDefault)))
+						else if (!(ctorParameters[i].Attributes.HasFlag(ParameterAttributes.Optional) || ctorParameters[i].Attributes.HasFlag(ParameterAttributes.HasDefault)))
 						{
 							return false;
 						}
