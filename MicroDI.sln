@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroDI", "MicroDI\MicroDI.csproj", "{83F34DD9-432D-486A-A2A6-961043A76D8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroDI", "MicroDI\MicroDI.csproj", "{83F34DD9-432D-486A-A2A6-961043A76D8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{69A508AB-3BE9-472A-B719-C874C394D126}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83F34DD9-432D-486A-A2A6-961043A76D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69A508AB-3BE9-472A-B719-C874C394D126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69A508AB-3BE9-472A-B719-C874C394D126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69A508AB-3BE9-472A-B719-C874C394D126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69A508AB-3BE9-472A-B719-C874C394D126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
