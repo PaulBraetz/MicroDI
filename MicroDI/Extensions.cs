@@ -1,50 +1,90 @@
-﻿using System;
+﻿using MicroDI.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static MicroDI.IServiceDefinition;
 
 namespace MicroDI
 {
 	public static class Extensions
 	{
-		public static IContainerFactory Add<TService, TImplementation>(this IContainerFactory factory, Scope serviceScope, params Object[] constructorArguments)
+		public static IContainer AddTransient(this IContainer container, Type serviceType, String? serviceName, Type serviceImplementationType, params Object[] constructorArguments)
 		{
-			factory.Add(new ServiceDefinition(typeof(TService), typeof(TImplementation), serviceScope, constructorArguments));
-			return factory;
+			var instructions = new ServiceFactoryInstructions(serviceImplementationType, constructorArguments);
+			var factory = new TransientServiceFactory(instructions);
+
+			var definition = new ServiceDefinition(serviceType, serviceName);
+
+			var registration = new ServiceRegistration(definition, factory);
+
+			container.Add(registration);
+
+			return container;
 		}
-		public static IContainerFactory Add<TService>(this IContainerFactory factory, Scope serviceScope, params Object[] constructorArguments)
+		public static IContainer AddTransient<TService, TServiceImplementation>(this IContainer container, params Object[] constructorArguments)
 		{
-			factory.Add<TService, TService>(serviceScope, constructorArguments);
-			return factory;
+			return container.AddTransient(typeof(TService), null, typeof(TServiceImplementation), constructorArguments);
 		}
 
-		public static IContainerFactory AddTransient<TService, TImplementation>(this IContainerFactory factory, params Object[] constructorArguments)
+		public static IContainer AddTransient(this IContainer container, Type serviceType, Type serviceImplementationType, params Object[] constructorArguments)
 		{
-			factory.Add<TService, TImplementation>(Scope.Transient, constructorArguments);
-			return factory;
-		}
-		public static IContainerFactory AddTransient<TService>(this IContainerFactory factory, params Object[] arguments)
-		{
-			factory.Add<TService>(Scope.Transient, arguments);
-			return factory;
+			return container.AddTransient(serviceType, null, serviceImplementationType, constructorArguments);
 		}
 
-		public static IContainerFactory AddSingleton<TService, TImplementation>(this IContainerFactory factory, params Object[] constructorArguments)
+		public static IContainer AddSingleton(this IContainer container, Type serviceType, String? serviceName, Type serviceImplementationType, params Object[] constructorArguments)
 		{
-			factory.Add<TService, TImplementation>(Scope.Singleton, constructorArguments);
-			return factory;
+			var instructions = new ServiceFactoryInstructions(serviceImplementationType, constructorArguments);
+			var factory = new SingletonServiceFactory(instructions);
+
+			var definition = new ServiceDefinition(serviceType, serviceName);
+
+			var registration = new ServiceRegistration(definition, factory);
+
+			container.Add(registration);
+
+			return container;
 		}
-		public static IContainerFactory AddSingleton<TService>(this IContainerFactory factory, params Object[] arguments)
+		public static IContainer AddSingleton<TService, TServiceImplementation>(this IContainer container, params Object[] constructorArguments)
 		{
-			factory.Add<TService>(Scope.Singleton, arguments);
-			return factory;
+			return container.AddSingleton(typeof(TService), null, typeof(TServiceImplementation), constructorArguments);
 		}
 
+		public static IContainer AddSingleton(this IContainer container, Type serviceType, Type serviceImplementationType, params Object[] constructorArguments)
+		{
+			return container.AddSingleton(serviceType, null, serviceImplementationType, constructorArguments);
+		}
+
+		public static Object Resolve(this IContainer container, Type serviceType, String? serviceName)
+		{
+			return container.Resolve(new ServiceDefinition(serviceType, serviceName));
+		}
+
+		public static TService Resolve<TService>(this IContainer container, String? serviceName)
+		{
+			return (TService)container.Resolve(typeof(TService), serviceName);
+		}
+		public static Object Resolve(this IContainer container, Type serviceType)
+		{
+			return container.Resolve(serviceType, null);
+		}
 		public static TService Resolve<TService>(this IContainer container)
 		{
 			return (TService)container.Resolve(typeof(TService));
+		}
+
+		public static Boolean IsRegistered(this IContainer container, Type serviceType, String serviceName)
+		{
+			return container.IsRegistered(new ServiceDefinition(serviceType, serviceName));
+		}
+		public static Boolean IsRegistered<TService>(this IContainer container, String serviceName)
+		{
+			return container.IsRegistered(typeof(TService), serviceName);
+		}
+
+		public static Boolean IsRegistered(this IContainer container, Type serviceType)
+		{
+			return container.IsRegistered(new ServiceDefinition(serviceType));
 		}
 		public static Boolean IsRegistered<TService>(this IContainer container)
 		{

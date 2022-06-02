@@ -1,30 +1,22 @@
-﻿using System;
+﻿using MicroDI.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static MicroDI.IServiceDefinition;
 
 namespace MicroDI
 {
-	public readonly struct ServiceDefinition : IServiceDefinition, IEquatable<ServiceDefinition>
+	public readonly struct ServiceDefinition: IServiceDefinition, IEquatable<ServiceDefinition>
 	{
-		public ServiceDefinition(Type serviceType, Scope serviceScope, params Object[] parameters) : this(serviceType, serviceType, serviceScope, parameters)
+		public ServiceDefinition(Type serviceType, String? serviceName = null)
 		{
-
-		}
-		public ServiceDefinition(Type serviceType, Type serviceImplementation, Scope serviceScope, params Object[] parameters)
-		{
-			ServiceType = serviceType;
-			ServiceImplementation = serviceImplementation;
-			ServiceScope = serviceScope;
-			ConstructorArguments = parameters;
+			ServiceType = serviceType ?? throw new ArgumentNullException(nameof(serviceType));
+			ServiceName = serviceName;
 		}
 
 		public readonly Type ServiceType { get; }
-		public readonly Type ServiceImplementation { get; }
-		public readonly Scope ServiceScope { get; }
-		public readonly IEnumerable<Object> ConstructorArguments { get; }
+		public readonly String? ServiceName { get; }
 
 		public override Boolean Equals(Object? obj)
 		{
@@ -33,17 +25,12 @@ namespace MicroDI
 
 		public Boolean Equals(ServiceDefinition other)
 		{
-			return ServiceType == other.ServiceType;
+			return ServiceDefinitionEqualityComparer.Instance.Equals(this, other);
 		}
 
 		public override Int32 GetHashCode()
 		{
-			return HashCode.Combine(ServiceType);
-		}
-
-		public override String? ToString()
-		{
-			return $"{ServiceType.Name}->{ServiceImplementation.Name} [{ServiceScope}][{String.Join(", ", ConstructorArguments)}]";
+			return ServiceDefinitionEqualityComparer.Instance.GetHashCode(this);
 		}
 
 		public static Boolean operator ==(ServiceDefinition left, ServiceDefinition right)

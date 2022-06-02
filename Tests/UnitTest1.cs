@@ -1,4 +1,5 @@
 using MicroDI;
+using MicroDI.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -11,30 +12,26 @@ namespace Tests
 	public class UnitTest1
 	{
 		[TestMethod]
-		public void TestContainerFactoryDirect()
+		public void TestContainerDirect()
 		{
-			IContainerFactory factory = new ContainerFactory();
+			IContainer container = new Container();
 
 			String arg = "Some Parameter";
 
-			factory.AddTransient<Object, String>(arg.ToCharArray());
-
-			IContainer container = factory.Build();
+			container.AddTransient<Object, String>(arg.ToCharArray());
 
 			var resolved = container.Resolve<Object>();
 
 			Assert.AreEqual(resolved.ToString(), arg);
 		}
 		[TestMethod]
-		public void TestContainerFactoryInterfaceParam()
+		public void TestContainerInterfaceParam()
 		{
-			IContainerFactory factory = new ContainerFactory();
+			IContainer container = new Container();
 
 			IEnumerable<String> arg = new[] { "Value 1", "Value 2" };
 
-			factory.AddTransient<IEnumerable<String>, List<String>>(arg);
-
-			IContainer container = factory.Build();
+			container.AddTransient<IEnumerable<String>, List<String>>(arg);
 
 			IEnumerable<String> resolved = container.Resolve<IEnumerable<String>>();
 
@@ -66,15 +63,13 @@ namespace Tests
 		}
 
 		[TestMethod]
-		public void TestContainerFactorySingleton()
+		public void TestContainerSingleton()
 		{
-
-			IContainerFactory factory = new ContainerFactory();
+			IContainer container = new Container();
 
 			String arg = "Some Parameter";
 
-
-			IContainer container = factory.AddSingleton<Object, SingletonService>(arg).Build();
+			container.AddSingleton<Object, SingletonService>(arg);
 
 			String expected = SingletonService.GetStringRepresentation(1, arg);
 
@@ -111,13 +106,13 @@ namespace Tests
 		}
 
 		[TestMethod]
-		public void TestContainerFactoryTransient()
+		public void TestContainerTransient()
 		{
-			IContainerFactory factory = new ContainerFactory();
+			IContainer container = new Container();
 
 			String arg = "Some Parameter";
 
-			IContainer container = factory.AddTransient<Object, TransientService>(arg).Build();
+			container.AddTransient<Object, TransientService>(arg);
 
 			for (Int32 i = 1; i < 10; i++)
 			{
