@@ -13,6 +13,11 @@ namespace MicroDI
 		private readonly IServiceFactory factory;
 		private readonly Lazy<Object> instance;
 
+		public override String ToString()
+		{
+			return "Singleton Factory";
+		}
+
 		public Object BuildService()
 		{
 			return instance.Value;

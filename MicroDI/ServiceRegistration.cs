@@ -13,6 +13,11 @@ namespace MicroDI
 		public readonly IServiceDefinition Definition { get; }
 		public readonly IServiceFactory Factory { get; }
 
+		public override String ToString()
+		{
+			return $"Definiton: {Definition}, Factory: {Factory}";
+		}
+
 		public override Boolean Equals(Object? obj)
 		{
 			return obj is ServiceRegistration registration && Equals(registration);

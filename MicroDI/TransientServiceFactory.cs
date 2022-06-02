@@ -67,6 +67,11 @@ namespace MicroDI
 
 		private readonly Func<Object> factory;
 
+		public override String ToString()
+		{
+			return "Transient Factory";
+		}
+
 		public Object BuildService()
 		{
 			return factory.Invoke();

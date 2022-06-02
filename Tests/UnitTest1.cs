@@ -80,24 +80,24 @@ namespace Tests
 			}
 		}
 
-		private sealed class TransientService
+		private sealed class TransientService1
 		{
-			public TransientService()
+			public TransientService1()
 			{
 				Interlocked.Increment(ref instanceCount);
-				passedArg = "No Arg";
+				PassedArg = "No Arg";
 			}
-			public TransientService(String arg)
+			public TransientService1(String arg)
 			{
 				Interlocked.Increment(ref instanceCount);
-				passedArg = arg;
+				PassedArg = arg;
 			}
 			private static Int32 instanceCount;
-			private readonly String passedArg;
+			public readonly String PassedArg;
 
 			public override String ToString()
 			{
-				return GetStringRepresentation(instanceCount, passedArg);
+				return GetStringRepresentation(instanceCount, PassedArg);
 			}
 			public static String GetStringRepresentation(Int32 instanceCount, String arg)
 			{
@@ -112,13 +112,57 @@ namespace Tests
 
 			String arg = "Some Parameter";
 
-			container.AddTransient<Object, TransientService>(arg);
+			container.AddTransient<Object, TransientService1>(arg);
 
 			for (Int32 i = 1; i < 10; i++)
 			{
 				Object? resolved = container.Resolve<Object>();
-				String expected = TransientService.GetStringRepresentation(i, arg);
+				String expected = TransientService1.GetStringRepresentation(i, arg);
 				Assert.AreEqual(expected, resolved.ToString());
+			}
+		}
+		private sealed class TransientService2
+		{
+			public TransientService2()
+			{
+				Interlocked.Increment(ref instanceCount);
+				PassedArg = "No Arg";
+			}
+			public TransientService2(String arg)
+			{
+				Interlocked.Increment(ref instanceCount);
+				PassedArg = arg;
+			}
+			private static Int32 instanceCount;
+			public readonly String PassedArg;
+
+			public override String ToString()
+			{
+				return GetStringRepresentation(instanceCount, PassedArg);
+			}
+			public static String GetStringRepresentation(Int32 instanceCount, String arg)
+			{
+				return $"Instances created: {instanceCount}, Arg passed to this instance: {arg}";
+			}
+		}
+		[TestMethod]
+		public void TestContainerByName()
+		{
+			IContainer container = new Container();
+
+			container.AddTransient(typeof(TransientService2), typeof(TransientService2), "Arg");
+			for (int i = 0; i< 10; i++)
+			{
+				container.AddTransient(typeof(TransientService2), $"Service {i}", typeof(TransientService2), $"Arg {i}");
+			}
+
+			var resolved = container.Resolve<TransientService2>();
+			Assert.AreEqual("Arg", resolved.PassedArg);
+
+			for (int i = 0; i < 10; i++)
+			{
+				resolved = container.Resolve<TransientService2>($"Service {i}");
+				Assert.AreEqual($"Arg {i}", resolved.PassedArg);
 			}
 		}
 	}

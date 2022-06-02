@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MicroDI.Abstractions
 {
-	public interface IContainer
+	public interface IContainer : IEnumerable<IServiceRegistration>
 	{
 		void Add(IServiceRegistration serviceRegistration);
 		Object Resolve(IServiceDefinition serviceDefinition);

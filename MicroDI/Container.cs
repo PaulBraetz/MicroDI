@@ -29,7 +29,7 @@ namespace MicroDI
 		{
 			if (!registrations.TryAdd(serviceRegistration.Definition, serviceRegistration.Factory))
 			{
-				throw new ArgumentException($"{serviceRegistration.Definition.ServiceType.Name} has already been registered.");
+				throw new ArgumentException($"A Definition for {serviceRegistration.Definition} has already been registered.");
 			}
 		}
 
@@ -37,12 +37,22 @@ namespace MicroDI
 		{
 			return registrations.TryGetValue(serviceDefinition, out IServiceFactory? factory) ?
 				factory.BuildService() :
-				throw new ArgumentException($"{serviceDefinition.ServiceType.Name} has not been registered.");
+				throw new ArgumentException($"A Definition for {serviceDefinition} has not been registered.");
 		}
 
 		public Boolean IsRegistered(IServiceDefinition serviceDefinition)
 		{
 			return registrations.ContainsKey(serviceDefinition);
+		}
+
+		public IEnumerator<IServiceRegistration> GetEnumerator()
+		{
+			return registrations.Select(kvp => (IServiceRegistration)new ServiceRegistration(kvp.Key, kvp.Value)).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 
 		private readonly ConcurrentDictionary<IServiceDefinition, IServiceFactory> registrations;

@@ -13,6 +13,11 @@ namespace MicroDI
 		public readonly Type ServiceImplementationType { get; }
 		public readonly IEnumerable<Object> ConstructorArguments { get; }
 
+		public override String ToString()
+		{
+			return $"Type: {ServiceImplementationType.Name}, Arguments: {String.Join(",", ConstructorArguments)}";
+		}
+
 		public override Boolean Equals(Object? obj)
 		{
 			return obj is ServiceFactoryInstructions instructions && Equals(instructions);

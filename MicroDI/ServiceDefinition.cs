@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MicroDI
 {
-	public readonly struct ServiceDefinition: IServiceDefinition, IEquatable<ServiceDefinition>
+	public readonly struct ServiceDefinition : IServiceDefinition, IEquatable<ServiceDefinition>
 	{
 		public ServiceDefinition(Type serviceType, String? serviceName = null)
 		{
@@ -17,6 +17,11 @@ namespace MicroDI
 
 		public readonly Type ServiceType { get; }
 		public readonly String? ServiceName { get; }
+
+		public override String ToString()
+		{
+			return ServiceName != null ? $"Name: {ServiceName}, Type: {ServiceType.Name}" : $"Type: {ServiceType.Name}";
+		}
 
 		public override Boolean Equals(Object? obj)
 		{
