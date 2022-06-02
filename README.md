@@ -2,69 +2,66 @@
 
 MicroDI is a simple and lightweight DI Container.
 
-## Versioning
-
-This library uses semantic versioning, i.e.:
-A change from a.b.c to a.b.X represents a non breaking change that does not add new interfaces.
-A change from a.b.c to a.X.0 represents a non breaking change that adds new interfaces.
-A change from a.b.c to X.0.0 represents a breaking change.
-
 ## How To Use
 
-1. Instantiate a new `ContainerFactory`
+1. Instantiate a new `Container`
 
 ```cs
-IContainerFactory containerFactory = new ContainerFactory();
+IContainer container = new Container();
 ```
 
-2. Add an `IServiceDefinition` to the container
+2. Construct an `IServiceRegistration` and add it to the container
 
 ```cs
 Type serviceType = typeof(TService);
+String serviceName = "MyService";
+
+IServiceDefinition definition = new ServiceDefinition(serviceType, serviceName);
+
 Type implementationType = typeof(TImplementation);
 Object constructorArg1 = new Object();
 Object constructorArg2 = new Object();
-IServiceDefinition serviceDefinition = new ServiceDefinition(serviceType, implementationType, Scope.Transient, constructorArg1, constructorArg2);
-containerFactory.Add(serviceDefinition);
+
+IServiceFactoryInstructions instructions = new ServiceFactoryInstructions(serviceImplementationType, new Object[] { arg1, arg2 });
+
+IServiceFactory factory = new TransientServiceFactory(instructions);
+			
+IServiceRegistration registration = new ServiceRegistration(definition, factory);
+container.Add(registration);
 ```
 
-3. Build an `IContainer`
+3. Resolve your service
 
 ```cs
-IContainer container = containerFactory.Build();
-```
+Type serviceType = typeof(TService);
+String serviceName = "MyService";
 
-4. Resolve your service
+IServiceDefinition definition = new ServiceDefinition(serviceType, serviceName);
 
-```cs
-TService service = (TService)container.Resolve(typeof(TService));
+Object service = container.Resolve(definition);
 ```
 
 ## Extension Methods
-Extension Methods found in `Extensions.cs` simplify using the container and its factory. The previous workflow is reduced to the following:
+Extension Methods found in `Extensions.cs` simplify using the container. The previous workflow is reduced to the following:
 
-1. Instantiate a new `ContainerFactory`
+1. Instantiate a new `Container`
 
 ```cs
-IContainerFactory containerFactory = new ContainerFactory();
+IContainer container = new Container();
 ```
 
-2. Add a service definition to the container
+2. Add a service registration to the container
 
 ```cs
 Object constructorArg1 = new Object();
 Object constructorArg2 = new Object();
-containerFactory.AddTransient<TService, TImplementation>(constructorArg1, constructorArg2);
+containerFactory.AddTransient<TService, TImplementation>("MyService", new Object[]{constructorArg1, constructorArg2});
 ```
 
-3. Build an `IContainer`
-
-```cs
-IContainer container = containerFactory.Build();
-```
-
-4. Resolve your service
+4. Resolve your service by type or name
 
 ```cs
 TService service = container.Resolve<TService>();
+service = container.Resolve<TService>("MyService");
 ```
+*Note: The provided `Container` class makes use of `ServiceDefinitionEqualityComparer.cs` for definition comparisons and resolving services based on definitions.*
