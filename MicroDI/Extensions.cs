@@ -22,6 +22,10 @@ namespace MicroDI
 
 			return container;
 		}
+		public static IContainer AddTransient<TService, TServiceImplementation>(this IContainer container, String serviceName, IEnumerable<Object> constructorArguments)
+		{
+			return container.AddTransient(typeof(TService), serviceName, typeof(TServiceImplementation), constructorArguments.ToArray());
+		}
 		public static IContainer AddTransient<TService, TServiceImplementation>(this IContainer container, params Object[] constructorArguments)
 		{
 			return container.AddTransient(typeof(TService), null, typeof(TServiceImplementation), constructorArguments);
@@ -44,6 +48,10 @@ namespace MicroDI
 			container.Add(registration);
 
 			return container;
+		}
+		public static IContainer AddSingleton<TService, TServiceImplementation>(this IContainer container, String serviceName, IEnumerable<Object> constructorArguments)
+		{
+			return container.AddSingleton(typeof(TService), serviceName, typeof(TServiceImplementation), constructorArguments);
 		}
 		public static IContainer AddSingleton<TService, TServiceImplementation>(this IContainer container, params Object[] constructorArguments)
 		{
