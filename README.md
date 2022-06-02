@@ -33,7 +33,12 @@ container.Add(registration);
 3. Resolve your service
 
 ```cs
-Object service = container.Resolve(typeof(TService));
+Type serviceType = typeof(TService);
+String serviceName = "MyService";
+
+IServiceDefinition definition = new ServiceDefinition(serviceType, serviceName);
+
+Object service = container.Resolve(definition);
 ```
 
 ## Extension Methods
@@ -53,8 +58,10 @@ Object constructorArg2 = new Object();
 containerFactory.AddTransient<TService, TImplementation>(constructorArg1, constructorArg2);
 ```
 
-4. Resolve your service
+4. Resolve your service by type or name
 
 ```cs
 TService service = container.Resolve<TService>();
+service = container.Resolve<TService>("MyService");
 ```
+*Note: The provided `Container` class makes use of `ServiceDefinitionEqualityComparer.cs` for definition comparisons and resolving services based on definitions.*
