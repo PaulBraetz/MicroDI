@@ -17,22 +17,12 @@ namespace MicroDI
 			{
 				return x == null;
 			}
-			if (!String.IsNullOrEmpty(x.ServiceName) && !String.IsNullOrEmpty(y.ServiceName))
-			{
-				return String.Equals(x.ServiceName, y.ServiceName);
-			}
-			if (x.ServiceType != null && y.ServiceType != null)
-			{
-				return x.ServiceType == y.ServiceType;
-			}
-			return false;
+			return String.Equals(x.ServiceName, y.ServiceName) && Object.ReferenceEquals(x.ServiceType, y.ServiceType);
 		}
 
 		public Int32 GetHashCode([DisallowNull] IServiceDefinition obj)
 		{
-			return obj.ServiceName?.GetHashCode() ??
-				obj.ServiceType?.GetHashCode() ??
-				throw new ArgumentException($"{nameof(obj)}.{nameof(IServiceDefinition.ServiceName)} or {nameof(obj)}.{nameof(IServiceDefinition.ServiceName)} must be assigned in order to calculate a hashcode.");
+			return HashCode.Combine(obj.ServiceName, obj.ServiceType);
 		}
 	}
 }

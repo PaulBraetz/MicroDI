@@ -15,12 +15,25 @@ namespace MicroDI
 			ServiceName = serviceName;
 		}
 
-		public readonly Type ServiceType { get; }
+		public readonly Type? ServiceType { get; }
 		public readonly String? ServiceName { get; }
 
 		public override String ToString()
 		{
-			return ServiceName != null ? $"Name: {ServiceName}, Type: {ServiceType.Name}" : $"Type: {ServiceType.Name}";
+			var retVal = new StringBuilder();
+			if(ServiceName != null)
+			{
+				retVal.Append("Name: ").Append(ServiceName);
+				if(ServiceType != null)
+				{
+					retVal.Append(", ");
+				}
+			}
+			if (ServiceType != null)
+			{
+				retVal.Append("Type: ").Append(ServiceType.Name);
+			}
+			return retVal.ToString();
 		}
 
 		public override Boolean Equals(Object? obj)

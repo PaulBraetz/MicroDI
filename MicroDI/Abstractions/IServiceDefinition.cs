@@ -3,6 +3,6 @@
 	public interface IServiceDefinition
 	{
 		String? ServiceName { get; }
-		Type ServiceType { get; }
+		Type? ServiceType { get; }
 	}
 }
