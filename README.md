@@ -64,4 +64,4 @@ containerFactory.AddTransient<TService, TImplementation>("MyService", new Object
 TService service = container.Resolve<TService>();
 service = container.Resolve<TService>("MyService");
 ```
-*Note: The provided `Container` class makes use of `ServiceDefinitionEqualityComparer.cs` for definition comparisons and resolving services based on definitions.*
+*Note: The provided `Container` class makes use of `ServiceDefinitionEqualityComparer.cs` for definition comparisons and resolving services based on definitions. Two `IServiceDefinitions` are defined as equal when both their `ServiceName` and `ServiceType` fields are equal.*
