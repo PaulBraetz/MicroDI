@@ -65,3 +65,7 @@ TService service = container.Resolve<TService>();
 service = container.Resolve<TService>("MyService");
 ```
 *Note: The provided `Container` class makes use of `ServiceDefinitionEqualityComparer.cs` for definition comparisons and resolving services based on definitions. Two `IServiceDefinitions` are defined as equal when both their `ServiceName` and `ServiceType` fields are equal.*
+
+## Implementing your own Service Factory
+
+Using `Helpers.GetConstructorExpression` you may create your own `IServiceFactory`. Looking at the implementation of `TransientServiceFactory` may help you with getting started.
