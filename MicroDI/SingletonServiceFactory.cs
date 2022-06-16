@@ -4,9 +4,10 @@ namespace MicroDI
 {
 	public readonly struct SingletonServiceFactory : IServiceFactory
 	{
-		public SingletonServiceFactory(IServiceFactoryInstructions instructions)
+		public SingletonServiceFactory(IServiceFactoryInstructions instructions):this(instructions, Array.Empty<IServiceRegistration>()) { }
+		public SingletonServiceFactory(IServiceFactoryInstructions instructions, IEnumerable<IServiceRegistration> dependencies)
 		{
-			factory = new TransientServiceFactory(instructions);
+			factory = new TransientServiceFactory(instructions, dependencies);
 			instance = new Lazy<Object>(factory.BuildService);
 		}
 
@@ -15,7 +16,7 @@ namespace MicroDI
 
 		public override String ToString()
 		{
-			return "Singleton Factory";
+			return "Singleton Service Factory";
 		}
 
 		public Object BuildService()

@@ -12,7 +12,7 @@ namespace MicroDI
 		public static IContainer AddTransient(this IContainer container, Type serviceType, String? serviceName, Type serviceImplementationType, params Object[] constructorArguments)
 		{
 			var instructions = new ServiceFactoryInstructions(serviceImplementationType, constructorArguments);
-			var factory = new TransientServiceFactory(instructions);
+			var factory = new TransientServiceFactory(instructions, container);
 
 			var definition = new ServiceDefinition(serviceType, serviceName);
 
@@ -39,7 +39,7 @@ namespace MicroDI
 		public static IContainer AddSingleton(this IContainer container, Type serviceType, String? serviceName, Type serviceImplementationType, params Object[] constructorArguments)
 		{
 			var instructions = new ServiceFactoryInstructions(serviceImplementationType, constructorArguments);
-			var factory = new SingletonServiceFactory(instructions);
+			var factory = new SingletonServiceFactory(instructions, container);
 
 			var definition = new ServiceDefinition(serviceType, serviceName);
 

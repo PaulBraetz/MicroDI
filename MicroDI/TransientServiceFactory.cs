@@ -12,64 +12,50 @@ namespace MicroDI
 {
 	public readonly struct TransientServiceFactory : IServiceFactory
 	{
-		public TransientServiceFactory(IServiceFactoryInstructions instructions)
+		public TransientServiceFactory(IServiceFactoryInstructions instructions) : this(instructions, Array.Empty<IServiceRegistration>()) { }
+		public TransientServiceFactory(IServiceFactoryInstructions instructions, IEnumerable<IServiceRegistration> registrations)
 		{
-			ConstructorInfo? ctorInfo = instructions.ServiceImplementationType.GetConstructors()
-				.SingleOrDefault(isMatch);
+			LambdaExpression? ctorExpression = null;
 
-			Boolean isMatch(ConstructorInfo constructorInfo)
+			var constructors = instructions.ServiceImplementationType.GetConstructors();
+
+			if (constructors.Length == 0)
+			{	
+				throw new ArgumentException("No Constructor found.");
+			}
+			if(constructors.Length == 1)
 			{
-				ParameterInfo[] ctorParameters = constructorInfo.GetParameters();
-
-				Type[] ctorParametersTypes = ctorParameters
-					.Select(p => p.ParameterType)
-					.ToArray();
-
-				Type[] ctorArgsTypes = instructions.ConstructorArguments
-					.Select(p => p.GetType())
-					.ToArray();
-
-				if (ctorParametersTypes.Length < ctorArgsTypes.Length)
+				ctorExpression = Helpers.GetConstructorExpression(constructors.Single(), instructions.ConstructorArguments, registrations);
+			}
+			else
+			{
+				foreach (var ctorInfo in instructions.ServiceImplementationType.GetConstructors())
 				{
-					return false;
-				}
-
-				for (int i = 0; i < ctorParametersTypes.Length; i++)
-				{
-					if (i < ctorArgsTypes.Length)
+					try
 					{
-						if (!ctorArgsTypes[i].IsAssignableTo(ctorParametersTypes[i]))
-						{
-							return false;
-						}
+						ctorExpression = Helpers.GetConstructorExpression(ctorInfo, instructions.ConstructorArguments, registrations);
+						break;
 					}
-					else if (!(ctorParameters[i].Attributes.HasFlag(ParameterAttributes.Optional) || ctorParameters[i].Attributes.HasFlag(ParameterAttributes.HasDefault)))
+					catch
 					{
-						return false;
+						continue;
 					}
 				}
-				return true;
 			}
 
-			if (ctorInfo == null)
+			if (ctorExpression == null)
 			{
-				throw new ArgumentException($"{instructions.ServiceImplementationType.Name} does not provide a constructor like {instructions.ServiceImplementationType.Name}({String.Join(", ", instructions.ConstructorArguments.Select(p => p.GetType().Name))})");
+				throw new ArgumentException("No Constructor found matching args and/or registrations.");
 			}
 
-			IEnumerable<ConstantExpression>? ctorArgs = instructions.ConstructorArguments.Select(Expression.Constant);
-
-			NewExpression? ctorExpr = Expression.New(ctorInfo, ctorArgs);
-
-			LambdaExpression? ctor = Expression.Lambda(ctorExpr);
-
-			factory = (Func<Object>)ctor.Compile();
+			factory = (Func<Object>)ctorExpression.Compile();
 		}
 
 		private readonly Func<Object> factory;
 
 		public override String ToString()
 		{
-			return "Transient Factory";
+			return "Transient Service Factory";
 		}
 
 		public Object BuildService()

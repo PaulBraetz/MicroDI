@@ -151,7 +151,7 @@ namespace Tests
 			IContainer container = new Container();
 
 			container.AddTransient(typeof(TransientService2), typeof(TransientService2), "Arg");
-			for (int i = 0; i< 10; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				container.AddTransient(typeof(TransientService2), $"Service {i}", typeof(TransientService2), $"Arg {i}");
 			}
@@ -164,6 +164,49 @@ namespace Tests
 				resolved = container.Resolve<TransientService2>($"Service {i}");
 				Assert.AreEqual($"Arg {i}", resolved.PassedArg);
 			}
+		}
+		private sealed class TransientService3
+		{
+			public TransientService3()
+			{
+				InstanceCount++;
+			}
+			public static int InstanceCount { get; private set; }
+			public String GetValue() => "TS3 Value";
+		}
+		private sealed class TransientService4
+		{
+			public TransientService4(TransientService3 dependency, String arg)
+			{
+				service = dependency;
+				this.arg = arg;
+			}
+
+			private TransientService3 service;
+			private String arg;
+
+			public String GetValue() => arg + service.GetValue();
+		}
+		[TestMethod]
+		public void TestRegisteredCtorArg()
+		{
+			IContainer container = new Container();
+
+			container.AddTransient<TransientService3, TransientService3>();
+			container.AddTransient<TransientService4, TransientService4>("Additional arg ");
+
+			Assert.AreEqual(0, TransientService3.InstanceCount);
+
+			TransientService4 resolved4 = container.Resolve<TransientService4>();
+			Assert.AreEqual(1, TransientService3.InstanceCount);
+
+			TransientService3 resolved3 = container.Resolve<TransientService3>();
+			Assert.AreEqual(2, TransientService3.InstanceCount);
+
+			Assert.IsNotNull(resolved4);
+			Assert.IsNotNull(resolved3);
+
+			Assert.AreEqual("Additional arg " + resolved3.GetValue(), resolved4.GetValue());
 		}
 	}
 }
