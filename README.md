@@ -4,7 +4,7 @@ MicroDI is a simple and lightweight DI Container.
 
 ## Features
 
-1. Runtime Generation and Compilation of Constructor Delegates
+1. Constructor Injection via Delegate Generation using Expressions
 2. Named or Typed Service Definition
 3. Smart Constructor Detection Using Provided Arguments and Registered Services
 
