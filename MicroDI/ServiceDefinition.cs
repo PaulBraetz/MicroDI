@@ -31,7 +31,8 @@ namespace MicroDI
 			}
 			if (ServiceType != null)
 			{
-				retVal.Append("Type: ").Append(ServiceType.Name);
+				retVal.Append("Type: ")
+					.Append(Helpers.GetTypeString(ServiceType));
 			}
 			return retVal.ToString();
 		}

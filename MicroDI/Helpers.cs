@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MicroDI
@@ -56,6 +57,31 @@ namespace MicroDI
 			NewExpression ctorExpr = Expression.New(ctorInfo, factoryExpressionArgs);
 
 			return Expression.Lambda(ctorExpr);
+		}
+		public static String GetTypeString(Type type)
+		{
+			var builder = new StringBuilder();
+
+			GetTypeString(type, builder);
+
+			return builder.ToString();
+		}
+		private static Regex TypeNamePattern = new Regex(@".*(?=`[0-9]+)");
+		private static void GetTypeString(Type type, StringBuilder builder)
+		{
+			var typeName = type.IsGenericType ? TypeNamePattern.Match(type.Name).Value : type.Name;
+			builder.Append(typeName);
+			if (type.IsGenericType)
+			{
+				builder.Append("<");
+				for (int i = 0; i < type.GenericTypeArguments.Length - 1; i++)
+				{
+					builder.Append(GetTypeString(type.GenericTypeArguments[i]))
+						.Append(", ");
+				}
+				builder.Append(GetTypeString(type.GenericTypeArguments[type.GenericTypeArguments.Length-1]));
+				builder.Append(">");
+			}
 		}
 	}
 }

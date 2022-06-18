@@ -15,7 +15,7 @@ namespace MicroDI
 
 		public override String ToString()
 		{
-			return $"Type: {ServiceImplementationType.Name}, Arguments: {String.Join(",", ConstructorArguments)}";
+			return $"Type: {Helpers.GetTypeString(ServiceImplementationType)}, Arguments: {String.Join(",", ConstructorArguments)}";
 		}
 
 		public override Boolean Equals(Object? obj)
