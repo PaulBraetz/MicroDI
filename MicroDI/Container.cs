@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 namespace MicroDI
 {
-	public sealed partial class Container : IContainer
+	public sealed class Container : IContainer
 	{
 		public Container(IEqualityComparer<IServiceDefinition> definitionComparer)
 		{
