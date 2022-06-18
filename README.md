@@ -2,6 +2,20 @@
 
 MicroDI is a simple and lightweight DI Container.
 
+## Features
+
+1. Constructor Injection via Delegate Generation using Expressions
+2. Named or Typed Service Definition
+3. Smart Constructor Detection Using Provided Arguments and Registered Services
+
+## Installation
+
+Nuget Gallery: https://www.nuget.org/packages/RhoMicro.MicroDI
+
+.Net CLI: `dotnet add package RhoMicro.MicroDI --version 4.2.0`
+
+Package Manager: `Install-Package RhoMicro.MicroDI -Version 4.2.0`
+
 ## How To Use
 
 1. Instantiate a new `Container`
