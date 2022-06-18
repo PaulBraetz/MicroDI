@@ -2,9 +2,9 @@
 
 namespace MicroDI
 {
-	public readonly struct ServiceFactoryInstructions : IServiceFactoryInstructions, IEquatable<ServiceFactoryInstructions>
+	public readonly struct ConstructorInjectionInstructions : IConstructorInjectionInstructions, IEquatable<ConstructorInjectionInstructions>
 	{
-		public ServiceFactoryInstructions(Type serviceImplementationType, IEnumerable<Object> constructorArguments)
+		public ConstructorInjectionInstructions(Type serviceImplementationType, IEnumerable<Object> constructorArguments)
 		{
 			ServiceImplementationType = serviceImplementationType ?? throw new ArgumentNullException(nameof(serviceImplementationType));
 			ConstructorArguments = constructorArguments ?? throw new ArgumentNullException(nameof(constructorArguments));
@@ -20,10 +20,10 @@ namespace MicroDI
 
 		public override Boolean Equals(Object? obj)
 		{
-			return obj is ServiceFactoryInstructions instructions && Equals(instructions);
+			return obj is ConstructorInjectionInstructions instructions && Equals(instructions);
 		}
 
-		public Boolean Equals(ServiceFactoryInstructions other)
+		public Boolean Equals(ConstructorInjectionInstructions other)
 		{
 			return ServiceImplementationType == other.ServiceImplementationType && ConstructorArguments.SequenceEqual(other.ConstructorArguments);
 		}
@@ -33,12 +33,12 @@ namespace MicroDI
 			return HashCode.Combine(ServiceImplementationType, ConstructorArguments);
 		}
 
-		public static Boolean operator ==(ServiceFactoryInstructions left, ServiceFactoryInstructions right)
+		public static Boolean operator ==(ConstructorInjectionInstructions left, ConstructorInjectionInstructions right)
 		{
 			return left.Equals(right);
 		}
 
-		public static Boolean operator !=(ServiceFactoryInstructions left, ServiceFactoryInstructions right)
+		public static Boolean operator !=(ConstructorInjectionInstructions left, ConstructorInjectionInstructions right)
 		{
 			return !(left == right);
 		}

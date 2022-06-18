@@ -1,8 +1,7 @@
 ﻿namespace MicroDI.Abstractions
 {
-	public interface IServiceFactoryInstructions
+	public interface IConstructorInjectionInstructions:IInjectionInstructions
 	{
-		Type ServiceImplementationType { get; }
 		IEnumerable<Object> ConstructorArguments { get; }
 	}
 }

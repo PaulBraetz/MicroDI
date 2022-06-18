@@ -12,12 +12,12 @@ namespace MicroDI
 {
 	public readonly struct TransientServiceFactory : IServiceFactory
 	{
-		public TransientServiceFactory(IServiceFactoryInstructions instructions) : this(instructions, Array.Empty<IServiceRegistration>()) { }
-		public TransientServiceFactory(IServiceFactoryInstructions instructions, IEnumerable<IServiceRegistration> registrations)
+		public TransientServiceFactory(IConstructorInjectionInstructions instructions) : this(instructions, Array.Empty<IServiceRegistration>()) { }
+		public TransientServiceFactory(IConstructorInjectionInstructions instructions, IEnumerable<IServiceRegistration> registrations)
 		{
 			LambdaExpression? ctorExpression = null;
 
-			var constructors = instructions.ServiceImplementationType.GetConstructors();
+			ConstructorInfo[] constructors = instructions.ServiceImplementationType.GetConstructors();
 
 			if (constructors.Length == 0)
 			{	
