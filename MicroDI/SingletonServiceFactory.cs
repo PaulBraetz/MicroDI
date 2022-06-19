@@ -1,17 +1,22 @@
 ﻿using MicroDI.Abstractions;
+using System.Linq.Expressions;
 
 namespace MicroDI
 {
 	public readonly struct SingletonServiceFactory : IServiceFactory
 	{
-		public SingletonServiceFactory(IConstructorInjectionInstructions instructions):this(instructions, Array.Empty<IServiceRegistration>()) { }
-		public SingletonServiceFactory(IConstructorInjectionInstructions instructions, IEnumerable<IServiceRegistration> dependencies)
+		private SingletonServiceFactory(LambdaExpression lambda)
 		{
-			factory = new TransientServiceFactory(instructions, dependencies);
-			instance = new Lazy<Object>(factory.BuildService);
+			instance = new Lazy<Object>((Func<Object>)lambda.Compile());
 		}
 
-		private readonly IServiceFactory factory;
+		public SingletonServiceFactory(IInjectionInstructions instructions)
+			: this(Helpers.GetDefaultConstructorLambda(instructions)) { }
+		public SingletonServiceFactory(IConstructorInjectionInstructions instructions)
+			: this(Helpers.GetConstructorInjectionConstructorLambda(instructions)) { }
+		public SingletonServiceFactory(IPropertynInjectionInstructions instructions)
+			: this(Helpers.GetConstructorInjectionConstructorLambda(instructions)) { }
+
 		private readonly Lazy<Object> instance;
 
 		public override String ToString()
@@ -21,7 +26,7 @@ namespace MicroDI
 
 		public Object BuildService()
 		{
-			return instance.Value;
+			return instance?.Value ?? throw new InvalidOperationException("Factory has not been initialized correctly. Use one of the available constructors.");
 		}
 	}
 }

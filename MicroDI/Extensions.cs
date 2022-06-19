@@ -9,58 +9,32 @@ namespace MicroDI
 {
 	public static class Extensions
 	{
-		public static IContainer AddTransient(this IContainer container, Type serviceType, String? serviceName, Type serviceImplementationType, params Object[] constructorArguments)
+		public static ServiceRegistrationBuilder SetServiceType<TService>(this ServiceRegistrationBuilder builder)
 		{
-			var instructions = new ConstructorInjectionInstructions(serviceImplementationType, constructorArguments);
-			var factory = new TransientServiceFactory(instructions, container);
+			return builder.SetServiceType(typeof(TService));
+		}
+		public static ServiceRegistrationBuilder SetServiceImplementationType<TImplementation>(this ServiceRegistrationBuilder builder)
+		{
+			return builder.SetServiceImplementationType(typeof(TImplementation));
+		}
 
-			var definition = new ServiceDefinition(serviceType, serviceName);
+		public static IContainer Add<TService>(this IContainer container)
+		{
+			return container.Add<TService, TService>();
+		}
+		public static IContainer Add<TService, TImplementation>(this IContainer container)
+		{
+			return container.Add(b => b.SetServiceType<TService>().SetServiceImplementationType<TImplementation>().BuildServiceRegistration());
+		}
+		public static IContainer Add(this IContainer container, Action<ServiceRegistrationBuilder> build)
+		{
+			var builder = new ServiceRegistrationBuilder();
 
-			var registration = new ServiceRegistration(definition, factory);
+			build.Invoke(builder);
 
-			container.Add(registration);
+			container.Add(builder.BuildServiceRegistration());
 
 			return container;
-		}
-		public static IContainer AddTransient<TService, TServiceImplementation>(this IContainer container, String serviceName, IEnumerable<Object> constructorArguments)
-		{
-			return container.AddTransient(typeof(TService), serviceName, typeof(TServiceImplementation), constructorArguments.ToArray());
-		}
-		public static IContainer AddTransient<TService, TServiceImplementation>(this IContainer container, params Object[] constructorArguments)
-		{
-			return container.AddTransient(typeof(TService), null, typeof(TServiceImplementation), constructorArguments);
-		}
-
-		public static IContainer AddTransient(this IContainer container, Type serviceType, Type serviceImplementationType, params Object[] constructorArguments)
-		{
-			return container.AddTransient(serviceType, null, serviceImplementationType, constructorArguments);
-		}
-
-		public static IContainer AddSingleton(this IContainer container, Type serviceType, String? serviceName, Type serviceImplementationType, params Object[] constructorArguments)
-		{
-			var instructions = new ConstructorInjectionInstructions(serviceImplementationType, constructorArguments);
-			var factory = new SingletonServiceFactory(instructions, container);
-
-			var definition = new ServiceDefinition(serviceType, serviceName);
-
-			var registration = new ServiceRegistration(definition, factory);
-
-			container.Add(registration);
-
-			return container;
-		}
-		public static IContainer AddSingleton<TService, TServiceImplementation>(this IContainer container, String serviceName, IEnumerable<Object> constructorArguments)
-		{
-			return container.AddSingleton(typeof(TService), serviceName, typeof(TServiceImplementation), constructorArguments);
-		}
-		public static IContainer AddSingleton<TService, TServiceImplementation>(this IContainer container, params Object[] constructorArguments)
-		{
-			return container.AddSingleton(typeof(TService), null, typeof(TServiceImplementation), constructorArguments);
-		}
-
-		public static IContainer AddSingleton(this IContainer container, Type serviceType, Type serviceImplementationType, params Object[] constructorArguments)
-		{
-			return container.AddSingleton(serviceType, null, serviceImplementationType, constructorArguments);
 		}
 
 		public static Object Resolve(this IContainer container, Type serviceType, String? serviceName)

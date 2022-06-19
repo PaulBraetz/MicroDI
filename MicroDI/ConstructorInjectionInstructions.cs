@@ -4,18 +4,23 @@ namespace MicroDI
 {
 	public readonly struct ConstructorInjectionInstructions : IConstructorInjectionInstructions, IEquatable<ConstructorInjectionInstructions>
 	{
-		public ConstructorInjectionInstructions(Type serviceImplementationType, IEnumerable<Object> constructorArguments)
+		public ConstructorInjectionInstructions(Type serviceImplementationType, IEnumerable<Object> constructorArguments, IEnumerable<IServiceRegistration> constructorInjectionArguments)
 		{
-			ServiceImplementationType = serviceImplementationType ?? throw new ArgumentNullException(nameof(serviceImplementationType));
+			InjectionInstructions = new InjectionInstructions(serviceImplementationType);
 			ConstructorArguments = constructorArguments ?? throw new ArgumentNullException(nameof(constructorArguments));
+			ConstructorInjectionArguments = constructorInjectionArguments ?? throw new ArgumentNullException(nameof(constructorInjectionArguments));
 		}
 
-		public readonly Type ServiceImplementationType { get; }
+		public static ConstructorInjectionInstructions Empty => new();
+
+		private readonly IInjectionInstructions InjectionInstructions { get; }
+		public readonly Type ServiceImplementationType => InjectionInstructions.ServiceImplementationType;
 		public readonly IEnumerable<Object> ConstructorArguments { get; }
+		public readonly IEnumerable<IServiceRegistration> ConstructorInjectionArguments { get; }
 
 		public override String ToString()
 		{
-			return $"Type: {Helpers.GetTypeString(ServiceImplementationType)}, Arguments: {String.Join(",", ConstructorArguments)}";
+			return $"{InjectionInstructions}\nConstructor Arguments: {String.Join(", ", ConstructorArguments)}\nConstructor Injection Arguments: {String.Join(", ", ConstructorInjectionArguments)}";
 		}
 
 		public override Boolean Equals(Object? obj)
@@ -25,12 +30,14 @@ namespace MicroDI
 
 		public Boolean Equals(ConstructorInjectionInstructions other)
 		{
-			return ServiceImplementationType == other.ServiceImplementationType && ConstructorArguments.SequenceEqual(other.ConstructorArguments);
+			return InjectionInstructions.Equals(other.InjectionInstructions) &&
+				(ConstructorArguments?.SequenceEqual(other.ConstructorArguments) ?? other.ConstructorArguments == null) &&
+				(ConstructorInjectionArguments?.SequenceEqual(other.ConstructorInjectionArguments) ?? other.ConstructorArguments == null);
 		}
 
 		public override Int32 GetHashCode()
 		{
-			return HashCode.Combine(ServiceImplementationType, ConstructorArguments);
+			return HashCode.Combine(InjectionInstructions, ConstructorArguments, ConstructorInjectionArguments);
 		}
 
 		public static Boolean operator ==(ConstructorInjectionInstructions left, ConstructorInjectionInstructions right)

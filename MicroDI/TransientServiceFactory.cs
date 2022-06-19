@@ -12,44 +12,17 @@ namespace MicroDI
 {
 	public readonly struct TransientServiceFactory : IServiceFactory
 	{
-		public TransientServiceFactory(IConstructorInjectionInstructions instructions) : this(instructions, Array.Empty<IServiceRegistration>()) { }
-		public TransientServiceFactory(IConstructorInjectionInstructions instructions, IEnumerable<IServiceRegistration> registrations)
+		private TransientServiceFactory(LambdaExpression lambda)
 		{
-			LambdaExpression? ctorExpression = null;
-
-			ConstructorInfo[] constructors = instructions.ServiceImplementationType.GetConstructors();
-
-			if (constructors.Length == 0)
-			{	
-				throw new ArgumentException("No Constructor found.");
-			}
-			if(constructors.Length == 1)
-			{
-				ctorExpression = Helpers.GetConstructorExpression(constructors.Single(), instructions.ConstructorArguments, registrations);
-			}
-			else
-			{
-				foreach (var ctorInfo in instructions.ServiceImplementationType.GetConstructors())
-				{
-					try
-					{
-						ctorExpression = Helpers.GetConstructorExpression(ctorInfo, instructions.ConstructorArguments, registrations);
-						break;
-					}
-					catch
-					{
-						continue;
-					}
-				}
-			}
-
-			if (ctorExpression == null)
-			{
-				throw new ArgumentException("No Constructor found matching args and/or registrations.");
-			}
-
-			factory = (Func<Object>)ctorExpression.Compile();
+			factory = (Func<Object>)lambda.Compile();
 		}
+
+		public TransientServiceFactory(IInjectionInstructions instructions)
+			: this(Helpers.GetDefaultConstructorLambda(instructions)) { }
+		public TransientServiceFactory(IConstructorInjectionInstructions instructions)
+			: this(Helpers.GetConstructorInjectionConstructorLambda(instructions)) { }
+		public TransientServiceFactory(IPropertynInjectionInstructions instructions)
+			: this(Helpers.GetConstructorInjectionConstructorLambda(instructions)) { }
 
 		private readonly Func<Object> factory;
 

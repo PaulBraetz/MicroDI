@@ -18,7 +18,13 @@ namespace Tests
 
 			String arg = "Some Parameter";
 
-			container.AddTransient<Object, String>(arg.ToCharArray());
+			container.Add(b =>
+			{
+				b.SetServiceType<Object>()
+					.SetServiceImplementationType<String>()
+					.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE)
+					.AddConstructorArgument(arg.ToCharArray());
+			});
 
 			var resolved = container.Resolve<Object>();
 
@@ -31,7 +37,13 @@ namespace Tests
 
 			IEnumerable<String> arg = new[] { "Value 1", "Value 2" };
 
-			container.AddTransient<IEnumerable<String>, List<String>>(arg);
+			container.Add(b =>
+			{
+				b.SetServiceType<IEnumerable<String>>()
+					.SetServiceImplementationType<List<String>>()
+					.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE)
+					.AddConstructorArgument(arg);
+			});
 
 			IEnumerable<String> resolved = container.Resolve<IEnumerable<String>>();
 
@@ -69,7 +81,13 @@ namespace Tests
 
 			String arg = "Some Parameter";
 
-			container.AddSingleton<Object, SingletonService>(arg);
+			container.Add(b =>
+			{
+				b.SetServiceType<Object>()
+					.SetServiceImplementationType<SingletonService>()
+					.SetScope(ServiceRegistrationBuilder.SINGLETON_SCOPE)
+					.AddConstructorArgument(arg);
+			});
 
 			String expected = SingletonService.GetStringRepresentation(1, arg);
 
@@ -112,7 +130,13 @@ namespace Tests
 
 			String arg = "Some Parameter";
 
-			container.AddTransient<Object, TransientService1>(arg);
+			container.Add(b =>
+			{
+				b.SetServiceType<Object>()
+					.SetServiceImplementationType<TransientService1>()
+					.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE)
+					.AddConstructorArgument(arg);
+			});
 
 			for (Int32 i = 1; i < 10; i++)
 			{
@@ -150,10 +174,24 @@ namespace Tests
 		{
 			IContainer container = new Container();
 
-			container.AddTransient(typeof(TransientService2), typeof(TransientService2), "Arg");
+			container.Add(b =>
+			{
+				b.SetServiceType<TransientService2>()
+					.SetServiceImplementationType<TransientService2>()
+					.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE)
+					.AddConstructorArgument("Arg");
+			});
+
 			for (int i = 0; i < 10; i++)
 			{
-				container.AddTransient(typeof(TransientService2), $"Service {i}", typeof(TransientService2), $"Arg {i}");
+				container.Add(b =>
+				{
+					b.SetServiceType<TransientService2>()
+						.SetName($"Service {i}")
+						.SetServiceImplementationType<TransientService2>()
+						.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE)
+						.AddConstructorArgument($"Arg {i}");
+				});
 			}
 
 			var resolved = container.Resolve<TransientService2>();
@@ -192,8 +230,19 @@ namespace Tests
 		{
 			IContainer container = new Container();
 
-			container.AddTransient<TransientService3, TransientService3>();
-			container.AddTransient<TransientService4, TransientService4>("Additional arg ");
+			container.Add(b =>
+			{
+				b.SetServiceType<TransientService3>()
+					.SetServiceImplementationType<TransientService3>()
+					.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE);
+			});
+			container.Add(b =>
+			{
+				b.SetServiceType<TransientService4>()
+					.SetServiceImplementationType<TransientService4>()
+					.SetScope(ServiceRegistrationBuilder.TRANSIENT_SCOPE)
+					.AddConstructorArgument("Additional arg ");
+			});
 
 			Assert.AreEqual(0, TransientService3.InstanceCount);
 

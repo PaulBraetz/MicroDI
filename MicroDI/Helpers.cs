@@ -12,7 +12,53 @@ namespace MicroDI
 {
 	public static class Helpers
 	{
-		public static LambdaExpression GetConstructorExpression(ConstructorInfo ctorInfo, IEnumerable<Object> passedArgs, IEnumerable<IServiceRegistration> dependencies)
+		public static LambdaExpression GetDefaultConstructorLambda(IInjectionInstructions instructions)
+		{
+			return GetDefaultConstructorLambda(instructions.ServiceImplementationType);
+		}
+		public static LambdaExpression GetDefaultConstructorLambda(Type type)
+		{
+			ConstructorInfo? ctor = type.GetConstructor(Type.EmptyTypes);
+
+			if (ctor == null) throw new ArgumentException($"{nameof(type)} does not provide a public default constructor.");
+
+			return Expression.Lambda(Expression.New(ctor));
+		}
+
+		public static LambdaExpression GetConstructorInjectionConstructorLambda(IConstructorInjectionInstructions instructions)
+		{
+			return GetConstructorInjectionConstructorLambda(instructions.ServiceImplementationType, instructions.ConstructorArguments, instructions.ConstructorInjectionArguments);
+		}
+		public static LambdaExpression GetConstructorInjectionConstructorLambda(Type type, IEnumerable<Object> ctorArgs, IEnumerable<IServiceRegistration> dependencies)
+		{
+			ConstructorInfo[] constructors = type.GetConstructors();
+
+			if (constructors.Length == 0)
+			{
+				throw new ArgumentException("No Constructor found.");
+			}
+			if (constructors.Length == 1)
+			{
+				return Helpers.GetConstructorInjectionConstructorLambda(constructors.Single(), ctorArgs, dependencies);
+			}
+			else
+			{
+				foreach (var ctorInfo in constructors)
+				{
+					try
+					{
+						return Helpers.GetConstructorInjectionConstructorLambda(ctorInfo, ctorArgs, dependencies);
+					}
+					catch
+					{
+						continue;
+					}
+				}
+			}
+
+			throw new ArgumentException("No Constructor found matching args and/or registrations.");
+		}
+		public static LambdaExpression GetConstructorInjectionConstructorLambda(ConstructorInfo ctorInfo, IEnumerable<Object> passedArgs, IEnumerable<IServiceRegistration> dependencies)
 		{
 			if (ctorInfo == null) throw new ArgumentNullException(nameof(ctorInfo));
 			if (passedArgs == null) throw new ArgumentNullException(nameof(passedArgs));
@@ -59,14 +105,14 @@ namespace MicroDI
 
 			return Expression.Lambda(ctorExpr);
 		}
-		public static LambdaExpression GetConstructorExpression(Type type, IEnumerable<Object> values, IEnumerable<IServiceRegistration> dependencies)
+		
+		public static LambdaExpression GetParameterInjectionConstructorLambda(IPropertynInjectionInstructions instructions)
 		{
-			ConstructorInfo? ctor = type.GetConstructor(Type.EmptyTypes);
-
-			if (ctor == null) throw new ArgumentException($"{nameof(type)} does not provide a public default constructor.");
-
-			NewExpression ctorCallExpression = Expression.New(ctor);
-			LambdaExpression ctorCallLambda = Expression.Lambda(ctorCallExpression);
+			return GetParameterInjectionConstructorLambda(instructions.ServiceImplementationType, GetConstructorInjectionConstructorLambda(instructions), instructions.PropertyValues, instructions.PropertyInjectionValues);
+		}
+		public static LambdaExpression GetParameterInjectionConstructorLambda(Type type, IEnumerable<Object> values, IEnumerable<IServiceRegistration> dependencies)
+		{
+			LambdaExpression ctorCallLambda = GetDefaultConstructorLambda(type);
 
 			var propInfos = new List<PropertyInfo>(type.GetProperties());
 
@@ -100,9 +146,9 @@ namespace MicroDI
 				propInfos.Remove(propInfo);
 			}
 
-			return GetConstructorExpression(type, ctorCallLambda, valueDict, dependencyDict);
+			return GetParameterInjectionConstructorLambda(type, ctorCallLambda, valueDict, dependencyDict);
 		}
-		public static LambdaExpression GetConstructorExpression(Type type, IDictionary<String, Object> values, IDictionary<String, IServiceRegistration> dependencies)
+		public static LambdaExpression GetParameterInjectionConstructorLambda(Type type, IDictionary<String, Object> values, IDictionary<String, IServiceRegistration> dependencies)
 		{
 			ConstructorInfo? ctor = type.GetConstructor(Type.EmptyTypes);
 
@@ -111,10 +157,9 @@ namespace MicroDI
 			NewExpression ctorCallExpression = Expression.New(ctor);
 			LambdaExpression ctorCallLambda = Expression.Lambda(ctorCallExpression);
 
-			return GetConstructorExpression(type, ctorCallLambda, values, dependencies);
+			return GetParameterInjectionConstructorLambda(type, ctorCallLambda, values, dependencies);
 		}
-
-		public static LambdaExpression GetConstructorExpression(Type type, LambdaExpression ctorCallExpression, IDictionary<String, Object> values, IDictionary<String, IServiceRegistration> dependencies)
+		public static LambdaExpression GetParameterInjectionConstructorLambda(Type type, LambdaExpression ctorCallExpression, IDictionary<String, Object> values, IDictionary<String, IServiceRegistration> dependencies)
 		{
 			Func<Object> ctorCallFunc = (Func<Object>)ctorCallExpression.Compile();
 			MethodInfo ctorCallFuncInvoke = ctorCallFunc.GetType().GetMethod(nameof(Func<Object>.Invoke))!;

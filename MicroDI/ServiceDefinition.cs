@@ -9,13 +9,15 @@ namespace MicroDI
 {
 	public readonly struct ServiceDefinition : IServiceDefinition, IEquatable<ServiceDefinition>
 	{
-		public ServiceDefinition(Type serviceType, String? serviceName = null)
+		public ServiceDefinition(Type? serviceType, String? serviceName = null)
 		{
 			ServiceType = serviceType ?? throw new ArgumentNullException(nameof(serviceType));
 			ServiceName = serviceName;
 		}
 
-		public readonly Type? ServiceType { get; }
+		public static ServiceDefinition Empty => new();
+
+		public readonly Type ServiceType { get; }
 		public readonly String? ServiceName { get; }
 
 		public override String ToString()
