@@ -12,9 +12,9 @@ MicroDI is a simple and lightweight DI Container.
 
 Nuget Gallery: https://www.nuget.org/packages/RhoMicro.MicroDI
 
-.Net CLI: `dotnet add package RhoMicro.MicroDI --version 4.2.0`
+.Net CLI: `dotnet add package RhoMicro.MicroDI --version 4.3.1`
 
-Package Manager: `Install-Package RhoMicro.MicroDI -Version 4.2.0`
+Package Manager: `Install-Package RhoMicro.MicroDI -Version 4.3.1`
 
 ## How To Use
 
