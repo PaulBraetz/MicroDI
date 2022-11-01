@@ -69,7 +69,7 @@ IContainer container = new Container();
 ```cs
 Object constructorArg1 = new Object();
 Object constructorArg2 = new Object();
-containerFactory.AddTransient<TService, TImplementation>("MyService", new Object[]{constructorArg1, constructorArg2});
+container.AddTransient<TService, TImplementation>("MyService", new Object[]{constructorArg1, constructorArg2});
 ```
 
 4. Resolve your service by type or name
